@@ -37,7 +37,6 @@ export async function getCurrentParticipant(): Promise<Participant | null> {
 /** 创建单个参与者（含 Auth 账号） */
 export async function createParticipant(
   name: string,
-  dept: string,
   totalChances: number,
   email: string,
   password: string,
@@ -64,7 +63,6 @@ export async function createParticipant(
       .insert({
         auth_user_id: authUser.user.id,
         name,
-        dept,
         total_chances: totalChances,
       })
       .select()
@@ -111,7 +109,6 @@ export async function batchCreateParticipants(
     const { error } = await adminClient.from('participants').insert({
       auth_user_id: authUser.user.id,
       name: row.name,
-      dept: row.dept,
       total_chances: row.totalChances,
     })
 

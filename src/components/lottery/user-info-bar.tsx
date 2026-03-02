@@ -25,7 +25,6 @@ export default function UserInfoBar({ participant, records }: UserInfoBarProps) 
   return (
     <div className="user-info-bar">
       <span className="user-name">{participant.name}</span>
-      {participant.dept && <span className="user-dept">{participant.dept}</span>}
       <span className="user-chances">
         剩余 {remaining} 次
       </span>

@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { createParticipant } from '@/actions/participants'
+import { createRiddle } from '@/actions/riddles'
 
-export default function ParticipantForm() {
-  const [name, setName] = useState('')
-  const [totalChances, setTotalChances] = useState('1')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+export default function RiddleForm() {
+  const [riddle, setRiddle] = useState('')
+  const [category, setCategory] = useState('')
+  const [answer, setAnswer] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -16,19 +15,13 @@ export default function ParticipantForm() {
     setLoading(true)
     setMessage('')
 
-    const result = await createParticipant(
-      name,
-      parseInt(totalChances, 10),
-      email,
-      password,
-    )
+    const result = await createRiddle(riddle, category, answer)
 
     if (result.success) {
       setMessage('创建成功')
-      setName('')
-      setTotalChances('1')
-      setEmail('')
-      setPassword('')
+      setRiddle('')
+      setCategory('')
+      setAnswer('')
     } else {
       setMessage(result.error ?? '创建失败')
     }
@@ -38,50 +31,37 @@ export default function ParticipantForm() {
 
   return (
     <div className="panel">
-      <div className="panel-title">添加参与者</div>
+      <div className="panel-title">添加灯谜</div>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
-          <div className="form-group">
-            <label>姓名</label>
+          <div className="form-group" style={{ flex: 2 }}>
+            <label>谜面</label>
             <input
               type="text"
-              placeholder="姓名"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              placeholder="请输入谜面"
+              value={riddle}
+              onChange={(e) => setRiddle(e.target.value)}
               required
             />
           </div>
           <div className="form-group">
-            <label>抽奖次数</label>
-            <input
-              type="number"
-              min="1"
-              value={totalChances}
-              onChange={(e) => setTotalChances(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="form-row">
-          <div className="form-group">
-            <label>登录邮箱</label>
-            <input
-              type="email"
-              placeholder="email@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>初始密码</label>
+            <label>类别</label>
             <input
               type="text"
-              placeholder="初始密码"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              placeholder="如: 字谜、成语"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               required
-              minLength={6}
+            />
+          </div>
+          <div className="form-group">
+            <label>谜底</label>
+            <input
+              type="text"
+              placeholder="请输入谜底"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              required
             />
           </div>
           <div className="form-group" style={{ justifyContent: 'flex-end' }}>

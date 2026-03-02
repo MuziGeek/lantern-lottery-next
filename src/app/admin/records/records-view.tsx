@@ -100,7 +100,6 @@ export default function RecordsView({ initialRecords }: RecordsViewProps) {
               <tr>
                 <th>序号</th>
                 <th>姓名</th>
-                <th>部门</th>
                 <th>奖品</th>
                 <th>等级</th>
                 <th>答题</th>
@@ -112,7 +111,6 @@ export default function RecordsView({ initialRecords }: RecordsViewProps) {
                 <tr key={r.id}>
                   <td>{i + 1}</td>
                   <td>{r.participant_name}</td>
-                  <td>{r.dept || '-'}</td>
                   <td>{r.prize_name}</td>
                   <td>
                     <span className={`badge ${getLevelBadgeClass(r.prize_level)}`}>

@@ -11,14 +11,16 @@ export async function login(
 ): Promise<ActionResponse> {
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
     return { success: false, error: '邮箱或密码错误' }
   }
 
+  const role = (data.user?.user_metadata as { role?: string })?.role
+
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect(role === 'admin' ? '/admin' : '/')
 }
 
 export async function logout(): Promise<void> {

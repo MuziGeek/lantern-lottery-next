@@ -66,7 +66,7 @@ export default function CsvImport() {
           marginBottom: 8,
         }}
       >
-        格式: 姓名, 部门, 抽奖次数, 邮箱, 初始密码
+        格式: 姓名, 抽奖次数, 邮箱, 初始密码
       </p>
       <div
         className="file-upload-area"

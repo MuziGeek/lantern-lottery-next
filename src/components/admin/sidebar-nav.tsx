@@ -8,6 +8,7 @@ const navItems = [
   { href: '/admin', label: '仪表盘', icon: '📊' },
   { href: '/admin/participants', label: '人员管理', icon: '👥' },
   { href: '/admin/prizes', label: '奖品设置', icon: '🎁' },
+  { href: '/admin/riddles', label: '灯谜管理', icon: '🏮' },
   { href: '/admin/records', label: '中奖记录', icon: '📋' },
 ]
 

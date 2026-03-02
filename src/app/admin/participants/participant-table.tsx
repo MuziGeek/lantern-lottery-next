@@ -30,7 +30,6 @@ export default function ParticipantTable({ participants }: ParticipantTableProps
           <tr>
             <th>序号</th>
             <th>姓名</th>
-            <th>部门</th>
             <th>总次数</th>
             <th>已用</th>
             <th>操作</th>
@@ -41,7 +40,6 @@ export default function ParticipantTable({ participants }: ParticipantTableProps
             <tr key={p.id}>
               <td>{i + 1}</td>
               <td>{p.name}</td>
-              <td>{p.dept || '-'}</td>
               <td>{p.total_chances}</td>
               <td>{p.used_chances}</td>
               <td>

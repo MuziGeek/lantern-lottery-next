@@ -23,7 +23,7 @@ export async function GET() {
     // 获取记录
     const { data: records, error } = await supabase
       .from('records')
-      .select('participant_name, dept, prize_name, prize_level, riddle_correct, riddle_attempts, created_at')
+      .select('participant_name, prize_name, prize_level, riddle_correct, riddle_attempts, created_at')
       .order('created_at', { ascending: false })
 
     if (error) {
