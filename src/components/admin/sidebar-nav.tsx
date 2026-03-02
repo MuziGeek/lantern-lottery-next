@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { logout } from '@/actions/auth'
 
 const navItems = [
@@ -14,13 +14,9 @@ const navItems = [
 
 export default function SidebarNav() {
   const pathname = usePathname()
-  const router = useRouter()
 
   async function handleLogout() {
-    const result = await logout()
-    if (result.success && result.data?.redirectTo) {
-      router.push(result.data.redirectTo)
-    }
+    await logout()
   }
 
   return (

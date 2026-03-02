@@ -1,6 +1,5 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import type { Participant, Record as LotteryRecord } from '@/types'
 import { logout } from '@/actions/auth'
 
@@ -21,14 +20,10 @@ function getLevelBadgeClass(level: string): string {
 }
 
 export default function UserInfoBar({ participant, records }: UserInfoBarProps) {
-  const router = useRouter()
   const remaining = participant.total_chances - participant.used_chances
 
   async function handleLogout() {
-    const result = await logout()
-    if (result.success && result.data?.redirectTo) {
-      router.push(result.data.redirectTo)
-    }
+    await logout()
   }
 
   return (

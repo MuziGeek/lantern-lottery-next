@@ -1,11 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { login } from '@/actions/auth'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,15 +16,11 @@ export default function LoginPage() {
 
     try {
       const result = await login(email, password)
-      if (result.success && result.data?.redirectTo) {
-        router.push(result.data.redirectTo)
-        return
-      }
       if (!result.success) {
         setError(result.error ?? '登录失败')
       }
     } catch {
-      setError('登录失败，请稍后重试')
+      // redirect 会抛出 NEXT_REDIRECT，属于正常流程
     } finally {
       setLoading(false)
     }
