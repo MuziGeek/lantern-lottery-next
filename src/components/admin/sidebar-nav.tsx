@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { logout } from '@/actions/auth'
 
 const navItems = [
@@ -14,6 +14,14 @@ const navItems = [
 
 export default function SidebarNav() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  async function handleLogout() {
+    const result = await logout()
+    if (result.success && result.data?.redirectTo) {
+      router.push(result.data.redirectTo)
+    }
+  }
 
   return (
     <aside className="admin-sidebar">
@@ -38,15 +46,14 @@ export default function SidebarNav() {
         >
           抽奖大厅
         </Link>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="btn btn-danger btn-sm"
-            style={{ width: '100%' }}
-          >
-            登出
-          </button>
-        </form>
+        <button
+          type="button"
+          className="btn btn-danger btn-sm"
+          style={{ width: '100%' }}
+          onClick={handleLogout}
+        >
+          登出
+        </button>
       </div>
     </aside>
   )
