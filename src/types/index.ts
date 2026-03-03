@@ -69,18 +69,19 @@ export interface ActionResponse<T = unknown> {
 }
 
 // ============================================================
-// CSV 导入行
-// ============================================================
-
-export interface CsvParticipantRow {
-  name: string
-  totalChances: number
-  email: string
-  password: string
-}
-
-// ============================================================
 // 用户角色
 // ============================================================
 
 export type UserRole = 'admin' | 'participant'
+
+// ============================================================
+// 抽奖错误类型
+// ============================================================
+
+export enum DrawErrorType {
+  NO_CHANCES = 'no_chances_left',
+  PRIZE_EXHAUSTED = 'prize_exhausted',
+  HIGHER_PRIZE_EXISTS = 'already_have_higher_prize',
+  PARTICIPANT_NOT_FOUND = 'participant_not_found',
+  PRIZE_NOT_FOUND = 'prize_not_found',
+}

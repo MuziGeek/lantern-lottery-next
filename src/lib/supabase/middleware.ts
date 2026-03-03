@@ -41,14 +41,14 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 未登录 → /login
-  if (!user && pathname !== '/login') {
+  if (!user && !['/login', '/register'].includes(pathname)) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  // 已登录访问 /login → 重定向回首页
-  if (user && pathname === '/login') {
+  // 已登录访问 /login 或 /register → 重定向回首页
+  if (user && ['/login', '/register'].includes(pathname)) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)

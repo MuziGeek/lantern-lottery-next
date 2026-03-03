@@ -1,34 +1,43 @@
 'use client'
 
 import { useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { login } from '@/actions/auth'
+import { register } from '@/actions/auth'
 
-export default function LoginPage() {
-  const searchParams = useSearchParams()
+export default function RegisterPage() {
+  const router = useRouter()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
-  const registered = searchParams.get('registered') === 'true'
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    if (password !== confirmPassword) {
+      setError('两次密码输入不一致')
+      return
+    }
+
+    if (password.length < 6) {
+      setError('密码至少需要 6 位')
+      return
+    }
+
     setLoading(true)
 
-    try {
-      const result = await login(username, password)
-      if (!result.success) {
-        setError(result.error ?? '登录失败')
-      }
-    } catch {
-      // redirect 会抛出 NEXT_REDIRECT，属于正常流程
-    } finally {
-      setLoading(false)
+    const result = await register(username, password)
+    setLoading(false)
+
+    if (!result.success) {
+      setError(result.error ?? '注册失败')
+      return
     }
+
+    router.push('/login?registered=true')
   }
 
   return (
@@ -58,25 +67,7 @@ export default function LoginPage() {
           </header>
 
           <div className="panel" style={{ marginTop: 8 }}>
-            <div className="panel-title">登录</div>
-
-            {registered && (
-              <div
-                style={{
-                  color: 'var(--jade-glow)',
-                  fontSize: '0.85rem',
-                  marginBottom: 14,
-                  fontFamily: 'var(--font-heading)',
-                  textAlign: 'center',
-                  padding: '8px',
-                  backgroundColor: 'rgba(52, 211, 153, 0.1)',
-                  borderRadius: '4px',
-                }}
-              >
-                注册成功，请登录
-              </div>
-            )}
-
+            <div className="panel-title">注册</div>
             <form onSubmit={handleSubmit}>
               <div className="form-group" style={{ marginBottom: 14 }}>
                 <label>游戏角色名</label>
@@ -88,13 +79,25 @@ export default function LoginPage() {
                   required
                 />
               </div>
-              <div className="form-group" style={{ marginBottom: 20 }}>
+              <div className="form-group" style={{ marginBottom: 14 }}>
                 <label>密码</label>
                 <input
                   type="password"
-                  placeholder="请输入密码"
+                  placeholder="至少 6 位"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  minLength={6}
+                  required
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: 20 }}>
+                <label>确认密码</label>
+                <input
+                  type="password"
+                  placeholder="再次输入密码"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  minLength={6}
                   required
                 />
               </div>
@@ -119,7 +122,7 @@ export default function LoginPage() {
                 disabled={loading}
                 style={{ width: '100%' }}
               >
-                {loading ? '登录中...' : '登录'}
+                {loading ? '注册中...' : '注册'}
               </button>
             </form>
 
@@ -131,16 +134,16 @@ export default function LoginPage() {
                 color: 'var(--text-secondary)',
               }}
             >
-              还没有账号？
+              已有账号？
               <Link
-                href="/register"
+                href="/login"
                 style={{
                   color: 'var(--vermilion-glow)',
                   marginLeft: 4,
                   textDecoration: 'none',
                 }}
               >
-                立即注册
+                去登录
               </Link>
             </div>
           </div>

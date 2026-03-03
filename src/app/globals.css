@@ -292,6 +292,75 @@ body::after {
   align-items: flex-end;
 }
 
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+.form-field input {
+  width: 100%;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin: 20px 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table thead {
+  background: rgba(212, 168, 67, 0.08);
+}
+
+.data-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--gold-leaf);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.data-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.1);
+}
+
+.data-table tbody tr:hover {
+  background: var(--glass-hover);
+}
+
+.info-box {
+  padding: 14px 18px;
+  margin-top: 20px;
+  border-radius: var(--radius-sm);
+  background: rgba(212, 168, 67, 0.08);
+  border-left: 3px solid var(--gold-leaf);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

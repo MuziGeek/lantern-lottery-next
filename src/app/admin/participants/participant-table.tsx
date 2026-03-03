@@ -9,14 +9,13 @@ interface ParticipantTableProps {
 }
 
 interface EditState {
-  name: string
   total_chances: number
 }
 
 export default function ParticipantTable({ participants }: ParticipantTableProps) {
   const [deleting, setDeleting] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editState, setEditState] = useState<EditState>({ name: '', total_chances: 0 })
+  const [editState, setEditState] = useState<EditState>({ total_chances: 0 })
   const [saving, setSaving] = useState(false)
 
   async function handleDelete(p: Participant) {
@@ -29,7 +28,7 @@ export default function ParticipantTable({ participants }: ParticipantTableProps
 
   function handleEdit(p: Participant) {
     setEditingId(p.id)
-    setEditState({ name: p.name, total_chances: p.total_chances })
+    setEditState({ total_chances: p.total_chances })
   }
 
   function handleCancel() {
@@ -39,7 +38,6 @@ export default function ParticipantTable({ participants }: ParticipantTableProps
   async function handleSave(p: Participant) {
     setSaving(true)
     const result = await updateParticipant(p.id, {
-      name: editState.name,
       total_chances: editState.total_chances,
     })
     setSaving(false)
@@ -62,7 +60,7 @@ export default function ParticipantTable({ participants }: ParticipantTableProps
         <thead>
           <tr>
             <th>序号</th>
-            <th>姓名</th>
+            <th>角色名</th>
             <th>总次数</th>
             <th>已用</th>
             <th>操作</th>
@@ -75,20 +73,7 @@ export default function ParticipantTable({ participants }: ParticipantTableProps
             return (
               <tr key={p.id}>
                 <td>{i + 1}</td>
-                <td>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editState.name}
-                      onChange={(e) =>
-                        setEditState({ ...editState, name: e.target.value })
-                      }
-                      className="edit-input"
-                    />
-                  ) : (
-                    p.name
-                  )}
-                </td>
+                <td>{p.name}</td>
                 <td>
                   {isEditing ? (
                     <input
@@ -97,7 +82,6 @@ export default function ParticipantTable({ participants }: ParticipantTableProps
                       min={p.used_chances}
                       onChange={(e) =>
                         setEditState({
-                          ...editState,
                           total_chances: Number(e.target.value),
                         })
                       }
@@ -133,7 +117,7 @@ export default function ParticipantTable({ participants }: ParticipantTableProps
                           className="btn btn-outline btn-sm"
                           onClick={() => handleEdit(p)}
                         >
-                          编辑
+                          分配
                         </button>
                         <button
                           className="btn btn-danger btn-sm"
