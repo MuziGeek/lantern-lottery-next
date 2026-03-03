@@ -118,7 +118,7 @@ export async function executeDraw(
           data: {
             prize: null,
             noPrize: true,
-            reason: `您已中过${oldLevel}，本次抽奖不计入`,
+            reason: `真遗憾～本次抽中的奖品不如您已获得的${oldLevel}，已为您保留最优奖品`,
           },
         }
       }
@@ -134,7 +134,7 @@ export async function executeDraw(
         revalidatePath('/')
         return {
           success: true,
-          data: { prize: null, noPrize: true, reason: '奖品已被抢完' },
+          data: { prize: null, noPrize: true, reason: '该奖品已被抢完，再接再厉' },
         }
       }
       return { success: false, error: drawError.message }

@@ -30,6 +30,9 @@ export default function ResultModal({
 
   const isWin = !result.noPrize && result.prize
 
+  // 判断是否是"奖品不如已有"的情况
+  const isBetterPrizeExists = result.reason?.includes('已为您保留最优奖品')
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -45,11 +48,11 @@ export default function ResultModal({
         ) : (
           <>
             <div className="prize-icon">🎐</div>
-            <div className="prize-name" style={{ fontSize: '1.4rem' }}>
+            <div className="prize-name" style={{ fontSize: isBetterPrizeExists ? '1.2rem' : '1.4rem' }}>
               {result.reason ?? '未中奖'}
             </div>
             <div className="riddle-result" style={{ marginTop: 12 }}>
-              再接再厉！
+              {isBetterPrizeExists ? '您的最优奖品已保留' : '再接再厉！'}
             </div>
           </>
         )}
