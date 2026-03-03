@@ -10,7 +10,7 @@ interface RiddlePanelProps {
   checkAnswer: (riddleId: number, answer: string) => Promise<{ correct: boolean }>
 }
 
-const MAX_ATTEMPTS = 3
+const MAX_ATTEMPTS = 1  // 只允许 1 次答题
 
 export default function RiddlePanel({
   riddle,
@@ -38,24 +38,21 @@ export default function RiddlePanel({
 
     const newAttempts = attempts + 1
     setAttempts(newAttempts)
+    setFinished(true)  // 立即标记为完成
 
     try {
       const result = await checkAnswer(riddleId, answer.trim())
 
       if (result.correct) {
         setMessage('回答正确！')
-        setFinished(true)
         setTimeout(() => onComplete(true, newAttempts), 600)
-      } else if (newAttempts >= MAX_ATTEMPTS) {
-        setMessage('答题次数已用完')
-        setFinished(true)
-        setTimeout(() => onComplete(false, newAttempts), 1200)
       } else {
-        setMessage(`回答错误，还有 ${MAX_ATTEMPTS - newAttempts} 次机会`)
-        setAnswer('')
+        setMessage('回答错误')
+        setTimeout(() => onComplete(false, newAttempts), 600)
       }
     } catch {
       setMessage('校验失败，请重试')
+      setFinished(false)  // 允许重试（网络错误情况）
     }
   }
 
@@ -82,11 +79,6 @@ export default function RiddlePanel({
           </button>
         </form>
         {message && <div className="riddle-attempts">{message}</div>}
-        {!message && (
-          <div className="riddle-attempts">
-            剩余 {MAX_ATTEMPTS - attempts} 次答题机会
-          </div>
-        )}
       </div>
     </>
   )
