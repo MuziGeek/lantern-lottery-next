@@ -1,6 +1,24 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { generateRecordsCsv } from '@/lib/csv-utils'
+
+function generateRecordsCsv(records: any[]): string {
+  const BOM = '\uFEFF'
+  const headers = ['参与者', '奖品', '奖品等级', '灯谜正确', '尝试次数', '中奖时间']
+  const rows = records.map(r => [
+    r.participant_name,
+    r.prize_name,
+    r.prize_level,
+    r.riddle_correct ? '是' : '否',
+    r.riddle_attempts,
+    new Date(r.created_at).toLocaleString('zh-CN'),
+  ])
+
+  const csvContent = [headers, ...rows]
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n')
+
+  return BOM + csvContent
+}
 
 export async function GET() {
   try {
