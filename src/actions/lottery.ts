@@ -69,8 +69,21 @@ export async function executeDraw(
       return { success: false, error: prizesError.message }
     }
 
-    // 2. 执行抽奖算法
-    const result = draw(prizes ?? [])
+    // 2. 特等奖去重：查询该用户是否已中过特等奖
+    const { data: existingSpecial } = await supabase
+      .from('records')
+      .select('id')
+      .eq('participant_id', participantId)
+      .eq('prize_level', '特等奖')
+      .limit(1)
+
+    // 若已中过特等奖，从奖品池中排除特等奖
+    const filteredPrizes = existingSpecial && existingSpecial.length > 0
+      ? (prizes ?? []).filter((p) => p.level !== '特等奖')
+      : (prizes ?? [])
+
+    // 3. 执行抽奖算法
+    const result = draw(filteredPrizes)
 
     if (result.noPrize || !result.prize) {
       // 未中奖：仅扣次数
