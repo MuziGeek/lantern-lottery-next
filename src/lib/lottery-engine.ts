@@ -3,10 +3,10 @@ import type { Prize, DrawResult, PrizeLevel } from '@/types'
 /**
  * 抽奖引擎 — 纯函数，在 Server Action 中调用
  *
- * 算法：两段式随机
+ * 算法：加权随机（100% 中奖）
  * 1. 过滤库存 > 0 的奖品池
- * 2. roll = Math.random() * 100，若 roll >= totalProb → 未中奖
- * 3. 在概率范围内二次加权随机选奖品
+ * 2. 计算总概率
+ * 3. roll = Math.random() * totalProb，在累积概率范围内抽取
  */
 
 /** 奖品档次映射 */
@@ -28,7 +28,7 @@ export function comparePrizeLevel(a: PrizeLevel, b: PrizeLevel): number {
   return getPrizeRank(a) - getPrizeRank(b)
 }
 
-/** 从可用奖品池中执行一次抽奖 */
+/** 从可用奖品池中执行一次抽奖（100% 中奖） */
 export function draw(availablePrizes: Prize[]): DrawResult {
   // 过滤库存 > 0
   const pool = availablePrizes.filter((p) => p.remaining > 0)
@@ -39,23 +39,23 @@ export function draw(availablePrizes: Prize[]): DrawResult {
 
   const totalProb = pool.reduce((sum, p) => sum + Number(p.probability), 0)
 
-  // 第一段：判断是否中奖
-  const roll = Math.random() * 100
-  if (roll >= totalProb) {
-    return { prize: null, noPrize: true, reason: '未中奖' }
+  // 如果总概率为 0，直接返回未中奖
+  if (totalProb <= 0) {
+    return { prize: null, noPrize: true, reason: '奖品概率配置错误' }
   }
 
-  // 第二段：加权随机选奖品
-  const normalizedRoll = Math.random() * totalProb
+  // 加权随机选奖品（100% 中奖）
+  // 使用单次随机数，在累积概率范围内抽取
+  const roll = Math.random() * totalProb
   let cumulative = 0
 
   for (const prize of pool) {
     cumulative += Number(prize.probability)
-    if (normalizedRoll < cumulative) {
+    if (roll < cumulative) {
       return { prize, noPrize: false }
     }
   }
 
-  // 兜底：返回最后一个奖品
+  // 兜底：返回最后一个奖品（防止浮点数精度问题）
   return { prize: pool[pool.length - 1], noPrize: false }
 }

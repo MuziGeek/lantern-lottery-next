@@ -23,6 +23,7 @@ export default function ProbabilityCalculator() {
       { name: '一等奖', count: 5, multiplier: ratio },
       { name: '二等奖', count: 7, multiplier: ratio ** 2 },
       { name: '三等奖', count: 10, multiplier: ratio ** 3 },
+      { name: '参与奖', count: 50, multiplier: ratio ** 4 },
     ]
 
     return levels.map((level) => {
