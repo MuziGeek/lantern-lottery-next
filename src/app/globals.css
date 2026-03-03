@@ -240,13 +240,16 @@ body::after {
 
 .app-header .festival-greeting {
   margin-top: 12px;
-  font-size: 0.9rem;
-  color: #fbbf24;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--gold-bright);
   text-align: center;
   padding: 8px 12px;
   background: rgba(185, 28, 28, 0.2);
   border-radius: 6px;
   border: 1px solid rgba(251, 191, 36, 0.3);
+  text-shadow: 0 0 8px rgba(240, 208, 96, 0.3);
+  letter-spacing: 2px;
 }
 
 .lantern-icon {
@@ -1351,7 +1354,7 @@ tr:last-child td { border-bottom: none; }
 @media (max-width: 768px) {
   .app-header h1 { font-size: 2rem; letter-spacing: 4px; }
   .app-header .subtitle { font-size: 0.75rem; letter-spacing: 3px; }
-  .app-header .festival-greeting { font-size: 0.8rem; padding: 6px 10px; }
+  .app-header .festival-greeting { font-size: 1rem; }
   .panel { padding: 18px; }
   .form-row { flex-direction: column; }
   .form-group { min-width: unset; }
