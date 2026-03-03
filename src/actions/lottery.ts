@@ -69,21 +69,8 @@ export async function executeDraw(
       return { success: false, error: prizesError.message }
     }
 
-    // 2. 特等奖去重：查询该用户是否已中过特等奖
-    const { data: existingSpecial } = await supabase
-      .from('records')
-      .select('id')
-      .eq('participant_id', participantId)
-      .eq('prize_level', '特等奖')
-      .limit(1)
-
-    // 若已中过特等奖，从奖品池中排除特等奖
-    const filteredPrizes = existingSpecial && existingSpecial.length > 0
-      ? (prizes ?? []).filter((p) => p.level !== '特等奖')
-      : (prizes ?? [])
-
-    // 3. 执行抽奖算法
-    const result = draw(filteredPrizes)
+    // 2. 执行抽奖算法（不过滤奖品池）
+    const result = draw(prizes ?? [])
 
     if (result.noPrize || !result.prize) {
       // 未中奖：仅扣次数
@@ -99,9 +86,9 @@ export async function executeDraw(
       return { success: true, data: { prize: null, noPrize: true, reason: result.reason } }
     }
 
-    // 3. 中奖：调用存储过程原子扣减
+    // 3. 中奖：调用新存储过程（带升级逻辑）
     const { data: recordId, error: drawError } = await supabase.rpc(
-      'execute_draw',
+      'execute_draw_with_upgrade',
       {
         p_participant_id: participantId,
         p_prize_id: result.prize.id,
@@ -111,6 +98,31 @@ export async function executeDraw(
     )
 
     if (drawError) {
+      // 处理"已有更高奖品"错误
+      if (drawError.message.includes('already_have_higher_prize')) {
+        const oldLevel = drawError.message.split(':')[1]
+
+        // 调用新的存储过程扣除次数
+        const { error: rejectError } = await supabase.rpc('execute_draw_rejected', {
+          p_participant_id: participantId,
+          p_old_prize_level: oldLevel,
+        })
+
+        if (rejectError) {
+          return { success: false, error: rejectError.message }
+        }
+
+        revalidatePath('/')
+        return {
+          success: true,
+          data: {
+            prize: null,
+            noPrize: true,
+            reason: `您已中过${oldLevel}，本次抽奖不计入`,
+          },
+        }
+      }
+
       // 库存竞争失败，降级为未中奖
       if (drawError.message.includes('prize_exhausted')) {
         const { error } = await supabase.rpc('execute_no_prize', {
