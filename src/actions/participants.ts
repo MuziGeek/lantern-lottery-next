@@ -125,6 +125,55 @@ export async function batchCreateParticipants(
   return { success: true, data: { created, errors } }
 }
 
+/** 更新参与者信息 */
+export async function updateParticipant(
+  id: string,
+  updates: { name?: string; total_chances?: number },
+): Promise<ActionResponse<Participant>> {
+  try {
+    const adminClient = createAdminClient()
+
+    // 查询当前参与者，校验 total_chances 不能小于 used_chances
+    if (updates.total_chances !== undefined) {
+      const { data: current, error: fetchError } = await adminClient
+        .from('participants')
+        .select('used_chances')
+        .eq('id', id)
+        .single()
+
+      if (fetchError) {
+        return { success: false, error: `查询参与者失败: ${fetchError.message}` }
+      }
+
+      if (updates.total_chances < current.used_chances) {
+        return {
+          success: false,
+          error: `总次数不能小于已用次数(${current.used_chances})`,
+        }
+      }
+    }
+
+    const { data, error } = await adminClient
+      .from('participants')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      return { success: false, error: `更新失败: ${error.message}` }
+    }
+
+    revalidatePath('/admin/participants')
+    return { success: true, data }
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : '未知错误',
+    }
+  }
+}
+
 /** 删除参与者（同时删除 Auth 账号） */
 export async function deleteParticipant(
   id: string,
